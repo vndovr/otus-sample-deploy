@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otus-sample-depl
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: otus-sample-app
+  template:
+    metadata:
+      labels:
+        app: otus-sample-app
+    spec:
+      containers:
+      - name: otus-sample
+        image: docker.io/vndovr/otus-sample:v2
+        ports:
+          - name: web
+            containerPort: 8000
+        livenessProbe:
+          httpGet:
+            port: 8000
+            path: /health
+          initialDelaySeconds: 2
+          periodSeconds: 1
+        readinessProbe:
+          httpGet:
+            port: 8000
+            path: /health
+          initialDelaySeconds: 2
+          periodSeconds: 1
