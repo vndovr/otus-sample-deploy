@@ -1,3 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otus-sample-service
+spec:
+  selector:
+    app: otus-sample-app
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: web
+  type: NodePort
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,7 +28,23 @@ spec:
     spec:
       containers:
       - name: otus-sample
-        image: docker.io/vndovr/otus-sample:v2
+        image: docker.io/vndovr/otus-sample:v3
+        env:
+          - name: QUARKUS_DATASOURCE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: otus-sample-secret
+                key: USERNAME
+          - name: QUARKUS_DATASOURCE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: otus-sample-secret
+                key: PASSWORD
+          - name: QUARKUS_DATASOURCE_JDBC_URL
+            valueFrom:
+              configMapKeyRef:
+                name: otus-sample-config
+                key: QUARKUS_DATASOURCE_JDBC_URL
         ports:
           - name: web
             containerPort: 8000
@@ -22,11 +52,11 @@ spec:
           httpGet:
             port: 8000
             path: /health
-          initialDelaySeconds: 2
-          periodSeconds: 1
+          initialDelaySeconds: 5
+          periodSeconds: 5
         readinessProbe:
           httpGet:
             port: 8000
             path: /health
-          initialDelaySeconds: 2
-          periodSeconds: 1
+          initialDelaySeconds: 5
+          periodSeconds: 5

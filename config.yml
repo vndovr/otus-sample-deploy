@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otus-sample-config
+data:
+  QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/otus-sample
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: otus-sample-secret
+type: Opaque
+data:
+  USERNAME: cG9zdGdyZXM=
+  PASSWORD: YWRtaW4xMjM=
